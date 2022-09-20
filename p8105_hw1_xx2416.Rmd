@@ -12,14 +12,14 @@ knitr::opts_chunk$set(echo = TRUE)
 # Solution of problem 1
 
 This is the solution to the **problem 1**
-```{r Problem 1, eval=FALSE}
+```{r Problem 1, results='hide'}
 install.packages("palmerpenguins",repos = "http://cran.us.r-project.org")
+data("penguins",package = "palmerpenguins")
+force(penguins)
 ```
 
 Here I am going to create an overall summary table for **penguins**
 ```{r,warning=FALSE}
-data("penguins",package = "palmerpenguins")
-force(penguins)
 library("gtsummary")
 library("tidyverse")
 penguins%>%
@@ -32,10 +32,9 @@ penguins%>%
                            year ~ "Year"))%>%
   bold_labels()%>%
   italicize_levels()
-mean(penguins$flipper_length_mm)
 ```
 This is a very beautiful table, but we still need to do some discussion.
-The names and classes of each variables in **penguins** are `r names(penguins)` and `r str(penguins)`. The size of **penguins** is `r nrow(penguins)`x`r ncol(penguins)`. The mean flipper length can be easily calulated, which is `r mean(pull(penguins, flipper_length_mm),na.rm=TRUE)`.
+The names and classes of each variables in **penguins** are `r names(penguins)` and `r str(penguins)`. The size of **penguins** is `r nrow(penguins)`x`r ncol(penguins)`. The mean flipper length can be easily calculated, which is `r mean(pull(penguins, flipper_length_mm),na.rm=TRUE)` mm.
 
 ### embed a scatterplot
 Here is a scatterplot of flipper_length_mm (y) vs bill_length_mm (x)
@@ -62,7 +61,6 @@ p2_df<-tibble(
                norm_sample>=0 & norm_sample<1~"medium",
                norm_sample<0~"small"))
 )
-
 ```
 Then we try to take the mean of eahc variable in **p2_df**
 * The mean of **norm_sample** is `r mean(pull(p2_df,norm_sample))`
