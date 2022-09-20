@@ -9,19 +9,19 @@ date: "2022-09-20"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Solution 1
+# Solution of problem 1
 
 This is the solution to the **problem 1**
-```{r Problem 1}
+```{r Problem 1, eval=FALSE}
 install.packages("palmerpenguins",repos = "http://cran.us.r-project.org")
-library("tidyverse")
-data("penguins",package = "palmerpenguins")
-force(penguins)
 ```
 
 Here I am going to create an overall summary table for **penguins**
-```{r}
+```{r,warning=FALSE}
+data("penguins",package = "palmerpenguins")
+force(penguins)
 library("gtsummary")
+library("tidyverse")
 penguins%>%
   tbl_summary(missing_text = "Missing",
               statistic = list(all_continuous()~"{mean} ({sd})"),
@@ -32,17 +32,50 @@ penguins%>%
                            year ~ "Year"))%>%
   bold_labels()%>%
   italicize_levels()
+mean(penguins$flipper_length_mm)
 ```
 This is a very beautiful table, but we still need to do some discussion.
-The names and classes of each variables in **penguins** are `r names(penguins)` and `r str(penguins)`. The size of **penguins** is `r nrow(penguins)`x`r ncol(penguins)`. The mean flipper length can be easily calulated, which is `r mean(pull(penguins, flipper_length_mm))`
+The names and classes of each variables in **penguins** are `r names(penguins)` and `r str(penguins)`. The size of **penguins** is `r nrow(penguins)`x`r ncol(penguins)`. The mean flipper length can be easily calulated, which is `r mean(pull(penguins, flipper_length_mm),na.rm=TRUE)`.
 
 ### embed a scatterplot
 Here is a scatterplot of flipper_length_mm (y) vs bill_length_mm (x)
-```{r scatterplot}
+```{r scatterplot, warning=FALSE}
 ggplot(penguins, aes(bill_length_mm, flipper_length_mm, colour=species))+
   geom_point()
 ggsave("scatterplot.png")
-  
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Solution of problem 2
+
+Create a data frame comprised of:
+
+a random sample of size 10 from a standard Normal distribution
+a logical vector indicating whether elements of the sample are greater than 0
+a character vector of length 10
+a factor vector of length 10, with 3 different factor “levels”
+```{r create df}
+p2_df<-tibble(
+  norm_sample=rnorm(10,mean = 1),
+  norm_sample_pos= norm_sample>0,
+  chr=c("a","b","c","d","e","f","g","h","i","j"),
+  fr=factor(case_when(norm_sample>0~"large",
+               norm_sample>=0 & norm_sample<1~"medium",
+               norm_sample<0~"small"))
+)
+
+```
+Then we try to take the mean of eahc variable in **p2_df**
+* The mean of **norm_sample** is `r mean(pull(p2_df,norm_sample))`
+* The mean of **norm_sample_pos** is `r mean(pull(p2_df,norm_sample_pos))`
+* The mean of **chr** is `r mean(pull(p2_df,chr))`
+* The mean of **fr** is `r mean(pull(p2_df, fr))`
+
+### Variable type convertion
+```{r ,eval=FALSE}
+as.numeric(pull(p2_df,norm_sample_pos))
+as.numeric(pull(p2_df,chr))
+as.numeric(pull(p2_df,fr))
+```
+
+When convert **norm_sample_pos** to numeric variable, TRUE and FALSE are converted 1 and 0, so its mean can be calculated. For character and factor variables, their means cannot be calculated. 
+As we can see in the results, **chr** and **fr** are not numeric or logical and NA is returned when calculating their means. **chr** is a character, as.numeric will return NA; **fr** is a factor, as.numeric will return the underlying numeric representation of each level.
