@@ -39,7 +39,9 @@ The names and classes of each variables in **penguins** are `r names(penguins)` 
 ### embed a scatterplot
 Here is a scatterplot of flipper_length_mm (y) vs bill_length_mm (x)
 ```{r scatterplot}
-ggplot(penguins,aes=(ill_length_mm,y=flipper_length_mm,colour=species))+
+ggplot(penguins, aes(bill_length_mm, flipper_length_mm, colour=species))+
+  geom_point()
+ggsave("scatterplot.png")
   
 ```
 
